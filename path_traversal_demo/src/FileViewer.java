@@ -10,6 +10,8 @@ public class FileViewer {
     private static final String BASE_DIR =
             System.getProperty("user.home")
             + File.separator
+            + "Group-8-ISEC3004-Assessment-1"
+            + File.separator
             + "path_traversal_demo"
             + File.separator
             + "documents"
