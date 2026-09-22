@@ -1,0 +1,31 @@
+<!-- FILE: dom_xss_demo/templates/welcome.html -->
+<!-- VULNERABLE VERSION - do not ship this. See Member 2's mitigated -->
+<!-- version later in this document.                                  -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ISEC3004 DOM XSS Demo - Welcome</title>
+</head>
+<body>
+    <h1>Welcome to the demo site!</h1>
+    <div id="greeting"></div>
+ 
+    <script>
+        // =========================================================
+        // VULNERABILITY (CWE-79 / DOM-based XSS - PortSwigger terms):
+        // SOURCE: location.hash - the URL fragment. Fragments are
+        // NEVER sent to the server as part of an HTTP request, so
+        // this payload will not appear anywhere in Flask's access
+        // log or in any network request - proof it is a purely
+        // client-side, DOM-based vulnerability.
+        // SINK: innerHTML - the value is written straight into the
+        // DOM as markup, so any <img>, <svg> or <script> tag the
+        // attacker supplies is parsed and EXECUTED by the browser.
+        // No validation, no output encoding, no sanitisation.
+        // =========================================================
+        var name = decodeURIComponent(location.hash.substring(1));
+        document.getElementById("greeting").innerHTML = "Hello, " + name + "!";
+    </script>
+</body>
+</html>
