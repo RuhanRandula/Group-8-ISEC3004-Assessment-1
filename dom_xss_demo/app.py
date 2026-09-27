@@ -11,6 +11,17 @@
 from flask import Flask, render_template
  
 app = Flask(__name__)
+
+@app.after_request
+def set_security_headers(response):
+    # Defence-in-depth: add a strict Content-Security-Policy.
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; "
+        "script-src 'self'; "
+        "object-src 'none'; "
+        "base-uri 'self'"
+    )
+    return response
  
  
 @app.route("/welcome")
