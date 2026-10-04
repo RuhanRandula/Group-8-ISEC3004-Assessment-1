@@ -1,0 +1,8 @@
+CONFIDENTIAL - PAYROLL SUMMARY
+
+Classification: Management Only
+Reporting Period: September 2026
+
+This file contains simulated confidential payroll information for the Path Traversal security demonstration.
+
+No real employee or financial information is contained in this file.

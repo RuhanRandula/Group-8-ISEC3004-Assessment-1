@@ -1,0 +1,13 @@
+INFORMATION SECURITY POLICY
+
+Version: 2026.1
+Department: Information Security
+Status: Active
+
+Key Requirements:
+- Protect staff credentials
+- Use authorised systems only
+- Report suspected security incidents
+- Do not disclose internal information to unauthorised persons
+
+This policy is intended for authorised staff.
