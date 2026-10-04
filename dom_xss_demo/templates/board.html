@@ -1,0 +1,143 @@
+<!-- FILE: dom_xss_demo/templates/board.html                              -->
+<!-- CurtiBoard — University Notice Board                                  -->
+<!-- ISEC3004 Assignment 1 — Member 1 — VULNERABLE VERSION                -->
+<!--                                                                       -->
+<!-- DOM XSS SOURCE: The search form sets location.hash in the browser.   -->
+<!-- DOM XSS SINK:   board.js reads that hash and writes it via innerHTML. -->
+<!-- The server never sees or processes the search term at all.            -->
+<!--                                                                       -->
+<!-- NOTE ON EVENT HANDLERS:                                               -->
+<!-- No inline onclick= or onsubmit= attributes are used in this file.    -->
+<!-- All event listeners are attached in board.js via addEventListener()  -->
+<!-- so this page works correctly under a Content-Security-Policy that    -->
+<!-- blocks inline event handlers (script-src 'self' blocks onclick= etc) -->
+<!-- This is best practice regardless of whether CSP is active.           -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CurtiBoard — University Notice Board</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-inner">
+        <span class="brand">📋 CurtiBoard</span>
+        <span class="tagline">University Notice Board</span>
+        <span class="mode-badge vulnerable">⚠️ VULNERABLE MODE</span>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- ── Search section ──────────────────────────────────────────────── -->
+    <section class="search-section">
+        <h2>Search Notices</h2>
+        <p class="hint">
+            Search by keyword. The query is passed via the URL fragment
+            (<code>#keyword</code>) and processed entirely in your browser —
+            the server never sees your search term.
+        </p>
+
+        <!--
+            id="searchForm" and id="clearBtn" are referenced by board.js,
+            which attaches event listeners via addEventListener() rather
+            than inline onclick=/onsubmit= attributes.
+        -->
+        <form class="search-form" id="searchForm">
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="e.g. Security, Lab, Assignment..."
+                autocomplete="off"
+            >
+            <button type="submit" class="btn">Search</button>
+            <button type="button" class="btn btn-outline" id="clearBtn">Clear</button>
+        </form>
+
+        <!--
+            DOM XSS SINK TARGET
+            id="search-banner" is the element that board.js writes into.
+
+            VULNERABLE:  board.js calls  banner.innerHTML = "..." + query + "..."
+                         Any HTML/JS in query is parsed and executed by the browser.
+
+            MITIGATED:   Member 2 replaces innerHTML with textContent,
+                         which treats query as plain text — tags are never parsed.
+        -->
+        <div id="search-banner" class="search-banner"></div>
+    </section>
+
+    <!-- ── Notice board grid ───────────────────────────────────────────── -->
+    <section class="notices-section">
+        <h2>All Notices</h2>
+        <div class="notice-grid">
+
+            <article class="notice-card"
+                data-title="ISEC3004 Lab 9 Reminder"
+                data-category="Security">
+                <span class="category-badge cat-security">Security</span>
+                <h3><a href="/notice/1">ISEC3004 Lab 9 Reminder</a></h3>
+                <p>Lab 9 covers Burp Suite proxy interception. Bring your laptops.</p>
+            </article>
+
+            <article class="notice-card"
+                data-title="Assignment 1 Submission Deadline"
+                data-category="Assessment">
+                <span class="category-badge cat-assessment">Assessment</span>
+                <h3><a href="/notice/2">Assignment 1 Submission Deadline</a></h3>
+                <p>Group Security Project due 9 October 2026 at 23:59 via Blackboard.</p>
+            </article>
+
+            <article class="notice-card"
+                data-title="Campus Wi-Fi Maintenance"
+                data-category="IT">
+                <span class="category-badge cat-it">IT</span>
+                <h3><a href="/notice/3">Campus Wi-Fi Maintenance</a></h3>
+                <p>Building 314 Wi-Fi offline Saturday 4 Oct, 08:00–12:00.</p>
+            </article>
+
+            <article class="notice-card"
+                data-title="Cyber Club CTF Meeting"
+                data-category="Events">
+                <span class="category-badge cat-events">Events</span>
+                <h3><a href="/notice/4">Cyber Club CTF Meeting</a></h3>
+                <p>Weekly Cyber Club meeting Thursday, Room 215, 5pm. CTF warm-up.</p>
+            </article>
+
+            <article class="notice-card"
+                data-title="Lecture Slides Updated"
+                data-category="Security">
+                <span class="category-badge cat-security">Security</span>
+                <h3><a href="/notice/5">Lecture Slides Updated</a></h3>
+                <p>Week 7 Path Traversal slides updated on Blackboard.</p>
+            </article>
+
+        </div>
+        <!--
+            hidden class (display:none in style.css) rather than
+            inline style="display:none" — inline styles are blocked by
+            style-src 'self' CSP just like inline scripts are.
+        -->
+        <p id="no-results" class="no-results hidden">
+            No notices matched your search.
+        </p>
+    </section>
+
+</main>
+
+<footer class="site-footer">
+    CurtiBoard — ISEC3004 Assignment 1 DOM XSS Demo — Local Use Only
+</footer>
+
+<!--
+    board.js loaded at the bottom so the DOM is fully built before
+    the script runs. It attaches all event listeners and contains
+    the vulnerable innerHTML sink — see the file for full documentation.
+-->
+<script src="{{ url_for('static', filename='js/board.js') }}"></script>
+
+</body>
+</html>
