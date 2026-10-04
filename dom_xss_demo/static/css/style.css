@@ -1,0 +1,217 @@
+/* FILE: dom_xss_demo/static/css/style.css */
+/* CurtiBoard — University Notice Board — Shared stylesheet                */
+/* Used by both the vulnerable version (Member 1) and                     */
+/* the mitigated version (Member 2). No changes needed here.              */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f0f4f8;
+    color: #222;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Header ── */
+.site-header {
+    background: #1a3c6b;
+    color: #fff;
+    padding: 14px 24px;
+}
+.header-inner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+.brand {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+}
+.tagline { font-size: 0.95rem; opacity: 0.75; flex: 1; }
+
+.mode-badge {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.03em;
+}
+.mode-badge.vulnerable { background: #c0392b; color: #fff; }
+.mode-badge.mitigated  { background: #27ae60; color: #fff; }
+
+/* ── Layout ── */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 16px;
+    flex: 1;
+}
+
+/* ── Search section ── */
+.search-section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 28px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.search-section h2 { margin-bottom: 6px; color: #1a3c6b; }
+.hint { font-size: 0.88rem; color: #666; margin-bottom: 14px; }
+.hint code {
+    background: #eef;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: monospace;
+}
+
+.search-form { display: flex; gap: 8px; flex-wrap: wrap; }
+.search-form input {
+    flex: 1;
+    min-width: 220px;
+    padding: 9px 14px;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+.search-form input:focus { outline: none; border-color: #1a3c6b; }
+
+.btn {
+    padding: 9px 20px;
+    background: #1a3c6b;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.97rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.15s;
+}
+.btn:hover { background: #2552a0; }
+.btn-outline {
+    background: transparent;
+    color: #1a3c6b;
+    border: 1.5px solid #1a3c6b;
+}
+.btn-outline:hover { background: #e8eef7; }
+
+/* ── Search banner — THE SINK TARGET ── */
+.search-banner {
+    margin-top: 14px;
+    padding: 10px 14px;
+    background: #e8f4fd;
+    border-left: 4px solid #1a3c6b;
+    border-radius: 4px;
+    font-size: 0.97rem;
+    color: #1a3c6b;
+}
+.search-banner:empty { display: none; }
+
+/* ── Notices grid ── */
+.notices-section h2 { margin-bottom: 16px; color: #1a3c6b; }
+.notice-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+.notice-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 18px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    border-top: 4px solid #1a3c6b;
+    transition: box-shadow 0.15s;
+}
+.notice-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,0.13); }
+.notice-card h3 { margin: 8px 0 6px; font-size: 1rem; }
+.notice-card h3 a { color: #1a3c6b; text-decoration: none; }
+.notice-card h3 a:hover { text-decoration: underline; }
+.notice-card p { font-size: 0.88rem; color: #555; line-height: 1.5; }
+
+/* ── Category badges ── */
+.category-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+.cat-security   { background: #fde8e8; color: #922; }
+.cat-assessment { background: #e8f0fd; color: #224; }
+.cat-it         { background: #e8fde8; color: #242; }
+.cat-events     { background: #fdf5e8; color: #542; }
+
+.no-results { margin-top: 20px; color: #888; font-style: italic; }
+
+/* ── Notice detail ── */
+.back-link {
+    display: inline-block;
+    margin-bottom: 18px;
+    color: #1a3c6b;
+    text-decoration: none;
+    font-size: 0.93rem;
+}
+.back-link:hover { text-decoration: underline; }
+.notice-detail {
+    background: #fff;
+    border-radius: 8px;
+    padding: 28px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.notice-detail h1 { margin: 10px 0 14px; color: #1a3c6b; }
+.notice-detail p { line-height: 1.7; color: #444; }
+
+/* ── Exploit demo box (Member 2 adds this) ── */
+.exploit-box {
+    background: #2d2d2d;
+    color: #f8f8f2;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 0.88rem;
+    overflow-x: auto;
+    border-left: 4px solid #c0392b;
+}
+.exploit-box .label {
+    color: #ff6b6b;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+}
+
+/* ── Mitigation diff box (Member 2 adds this) ── */
+.diff-box {
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 16px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+}
+.diff-removed { background: #fde8e8; color: #922; padding: 8px 14px; }
+.diff-added   { background: #e8fde8; color: #242; padding: 8px 14px; }
+
+/* ── Footer ── */
+.site-footer {
+    background: #1a3c6b;
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+    padding: 12px;
+    font-size: 0.8rem;
+}
+
+/* ── Utility ── */
+/* .hidden replaces inline style="display:none" throughout board.html.    */
+/* Inline styles are blocked by style-src 'self' CSP in the same way     */
+/* that inline <script> blocks are blocked by script-src 'self'.          */
+/* Using a CSS class keeps the page functional under strict CSP.          */
+.hidden { display: none; }
