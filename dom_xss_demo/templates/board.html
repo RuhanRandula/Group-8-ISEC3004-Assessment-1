@@ -1,23 +1,24 @@
-<!-- FILE: dom_xss_demo/templates/board.html                              -->
-<!-- CurtiBoard — University Notice Board                                  -->
-<!-- ISEC3004 Assignment 1 — Member 1 — VULNERABLE VERSION                -->
-<!--                                                                       -->
-<!-- DOM XSS SOURCE: The search form sets location.hash in the browser.   -->
-<!-- DOM XSS SINK:   board.js reads that hash and writes it via innerHTML. -->
-<!-- The server never sees or processes the search term at all.            -->
-<!--                                                                       -->
-<!-- NOTE ON EVENT HANDLERS:                                               -->
-<!-- No inline onclick= or onsubmit= attributes are used in this file.    -->
-<!-- All event listeners are attached in board.js via addEventListener()  -->
-<!-- so this page works correctly under a Content-Security-Policy that    -->
-<!-- blocks inline event handlers (script-src 'self' blocks onclick= etc) -->
-<!-- This is best practice regardless of whether CSP is active.           -->
+<!-- FILE: dom_xss_demo/templates/board.html -->
+<!-- CurtiBoard — University Notice Board -->
+<!-- ISEC3004 Assignment 1 — Member 2 — MITIGATED VERSION -->
+
+<!-- Changes made for the mitigated version:
+     - Changed the mode badge to MITIGATED
+     - Added the mitigation information section
+     - Moved inline styles to style.css
+     - Kept event handlers in board.js
+     - The XSS fix is in board.js using textContent
+-->
+
+<!-- The page uses external CSS and JavaScript so it works with the CSP
+     settings added in app.py. -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CurtiBoard — University Notice Board</title>
+    <title>CurtiBoard — University Notice Board (Mitigated)</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
@@ -26,26 +27,53 @@
     <div class="header-inner">
         <span class="brand">📋 CurtiBoard</span>
         <span class="tagline">University Notice Board</span>
-        <span class="mode-badge vulnerable">⚠️ VULNERABLE MODE</span>
+        <span class="mode-badge mitigated">✅ MITIGATED MODE</span>
     </div>
 </header>
 
 <main class="container">
 
-    <!-- ── Search section ──────────────────────────────────────────────── -->
+    <!-- Mitigation summary -->
+    <!-- Styling for this section is handled in style.css. -->
+    <section class="search-section mitigation-panel">
+        <h2 class="mitigation-heading">✅ Mitigations Applied</h2>
+        <p class="mitigation-intro">
+            Two independent layers of defence have been applied to this version:
+        </p>
+        <div class="diff-box">
+            <div class="diff-removed">
+                ✗ REMOVED (vulnerable):&nbsp;&nbsp;
+                banner.innerHTML = 'Showing results for: "' + query + '"';
+            </div>
+            <div class="diff-added">
+                ✓ REPLACED (mitigated):&nbsp;&nbsp;
+                banner.textContent = 'Showing results for: "' + query + '"';
+            </div>
+        </div>
+        <p class="mitigation-note">
+            <strong>Layer 1 (primary fix):</strong> textContent in board.js — removes the dangerous sink.<br>
+            <strong>Layer 2 (defence-in-depth):</strong> Content-Security-Policy header in app.py —
+            blocks all inline script execution even if a future sink were reintroduced.
+        </p>
+        <p class="mitigation-note">
+            <strong>Verification:</strong> Paste this URL in your browser to confirm the exploit no longer fires:<br>
+            <code class="verify-url">
+                http://127.0.0.1:5000/board#&lt;img src=x onerror=alert(document.cookie)&gt;
+            </code>
+        </p>
+    </section>
+
+    <!-- Search section -->
     <section class="search-section">
         <h2>Search Notices</h2>
         <p class="hint">
             Search by keyword. The query is passed via the URL fragment
-            (<code>#keyword</code>) and processed entirely in your browser —
-            the server never sees your search term.
+            (<code>#keyword</code>) and processed entirely in your browser.
+            In this mitigated version, the query is written via
+            <strong>textContent</strong> (not innerHTML) so HTML payloads
+            are treated as plain text — not executed.
         </p>
 
-        <!--
-            id="searchForm" and id="clearBtn" are referenced by board.js,
-            which attaches event listeners via addEventListener() rather
-            than inline onclick=/onsubmit= attributes.
-        -->
         <form class="search-form" id="searchForm">
             <input
                 type="text"
@@ -57,20 +85,11 @@
             <button type="button" class="btn btn-outline" id="clearBtn">Clear</button>
         </form>
 
-        <!--
-            DOM XSS SINK TARGET
-            id="search-banner" is the element that board.js writes into.
-
-            VULNERABLE:  board.js calls  banner.innerHTML = "..." + query + "..."
-                         Any HTML/JS in query is parsed and executed by the browser.
-
-            MITIGATED:   Member 2 replaces innerHTML with textContent,
-                         which treats query as plain text — tags are never parsed.
-        -->
+        <!-- The search result is displayed here by board.js using textContent. -->
         <div id="search-banner" class="search-banner"></div>
     </section>
 
-    <!-- ── Notice board grid ───────────────────────────────────────────── -->
+    <!-- Notice board -->
     <section class="notices-section">
         <h2>All Notices</h2>
         <div class="notice-grid">
@@ -116,11 +135,6 @@
             </article>
 
         </div>
-        <!--
-            hidden class (display:none in style.css) rather than
-            inline style="display:none" — inline styles are blocked by
-            style-src 'self' CSP just like inline scripts are.
-        -->
         <p id="no-results" class="no-results hidden">
             No notices matched your search.
         </p>
@@ -132,11 +146,6 @@
     CurtiBoard — ISEC3004 Assignment 1 DOM XSS Demo — Local Use Only
 </footer>
 
-<!--
-    board.js loaded at the bottom so the DOM is fully built before
-    the script runs. It attaches all event listeners and contains
-    the vulnerable innerHTML sink — see the file for full documentation.
--->
 <script src="{{ url_for('static', filename='js/board.js') }}"></script>
 
 </body>
