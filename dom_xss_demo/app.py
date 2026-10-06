@@ -6,13 +6,13 @@ from flask import Flask, render_template, make_response
 app = Flask(__name__)
 
 # Set to True for the fixed version.
-ENABLE_MITIGATIONS = True
+TOGGLE_MITIGATION = True
 
 
 @app.after_request
 def apply_security_headers(response):
     # Add CSP as an extra layer of protection.
-    if ENABLE_MITIGATIONS:
+    if TOGGLE_MITIGATION:
         response.headers["Content-Security-Policy"] = (
             "default-src 'self'; "
             "script-src 'self'; "
