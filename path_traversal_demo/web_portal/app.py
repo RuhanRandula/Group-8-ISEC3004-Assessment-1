@@ -76,6 +76,7 @@ def view_document(filename):
     if "username" not in session:
         return redirect(url_for("login"))
 
+    # Intentionally vulnerable: no path validation
     requested_path = DOCUMENTS_DIR / filename
 
     try:
@@ -94,6 +95,7 @@ def view_document(filename):
         log_access(session["username"], filename, "NOT_FOUND")
         abort(404)
 
+
 @app.route("/view")
 def view_by_parameter():
     if "username" not in session:
@@ -104,14 +106,8 @@ def view_by_parameter():
     if not filename:
         abort(400)
 
-    requested_path = (DOCUMENTS_DIR / filename).resolve()
-    documents_root = DOCUMENTS_DIR.resolve()
-
-    try:
-        requested_path.relative_to(documents_root)
-    except ValueError:
-        log_access(session["username"], filename, "BLOCKED_TRAVERSAL")
-        abort(403)
+    # Intentionally vulnerable: no path validation
+    requested_path = DOCUMENTS_DIR / filename
 
     try:
         with open(requested_path, "r", encoding="utf-8") as document:
@@ -128,6 +124,7 @@ def view_by_parameter():
     except (FileNotFoundError, IsADirectoryError, UnicodeDecodeError):
         log_access(session["username"], filename, "NOT_FOUND")
         abort(404)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
