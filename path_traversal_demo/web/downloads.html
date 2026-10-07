@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CCSEP | Downloads</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="portal-header">
+
+    <div class="portal-header-content">
+
+        <div class="portal-brand">
+
+            <img src="assets/curtin-colombo-logo.png.png"
+                 alt="Curtin University Colombo">
+
+            <div>
+                <strong>Student Portal</strong>
+                <span>Cyber Crime and Security Enhanced Programming</span>
+            </div>
+
+        </div>
+
+        <div class="portal-user">
+
+            <span>ISEC3004</span>
+
+            <button onclick="window.location.href='dashboard.html'">
+                Dashboard
+            </button>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<main class="portal-page">
+
+    <div class="page-heading">
+
+        <p class="section-label">COURSE FILES</p>
+
+        <h1>Downloads</h1>
+
+        <p>
+            Download course files available through the student portal.
+        </p>
+
+    </div>
+
+
+    <section class="resource-layout">
+
+        <div class="resource-list">
+
+            <div class="resource-card">
+
+                <div>
+
+                    <p class="document-type">
+                        COURSE FILE
+                    </p>
+
+                    <h2>Course Material</h2>
+
+                    <p>
+                        Course material provided for ISEC3004 students.
+                    </p>
+
+                </div>
+
+                <button
+                    class="view-button"
+                    onclick="downloadFile('course_material.txt')">
+                    Download
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <aside class="file-request-panel">
+
+            <p class="section-label">
+                FILE DOWNLOAD
+            </p>
+
+            <h2>Download a file</h2>
+
+            <p>
+                Enter the filename of a course file.
+            </p>
+
+            <label for="downloadName">
+                Filename
+            </label>
+
+            <input
+                type="text"
+                id="downloadName"
+                placeholder="course_material.txt">
+
+            <button
+                class="request-button"
+                onclick="requestDownload()">
+                Download File
+            </button>
+
+        </aside>
+
+    </section>
+
+
+    <section class="document-result">
+
+        <div class="result-header">
+
+            <div>
+
+                <p class="section-label">
+                    DOWNLOAD REQUEST
+                </p>
+
+                <h2>File Request</h2>
+
+            </div>
+
+            <span id="downloadStatus">
+                No download requested
+            </span>
+
+        </div>
+
+        <pre id="downloadMessage">Select a file to download.</pre>
+
+    </section>
+
+</main>
+
+
+<footer class="portal-footer">
+
+    <p>
+        ISEC3004 Cyber Crime and Security Enhanced Programming
+    </p>
+
+    <p>
+        Educational security demonstration
+    </p>
+
+</footer>
+
+
+<script>
+
+function downloadFile(fileName) {
+
+    document.getElementById("downloadName").value =
+        fileName;
+
+    requestDownload();
+}
+
+
+function requestDownload() {
+
+    const fileName =
+        document.getElementById("downloadName").value.trim();
+
+    const status =
+        document.getElementById("downloadStatus");
+
+    const message =
+        document.getElementById("downloadMessage");
+
+
+    if (fileName === "") {
+
+        message.textContent =
+            "Please enter a filename.";
+
+        status.textContent =
+            "No download requested";
+
+        return;
+    }
+
+
+    status.textContent =
+        "Preparing download: " + fileName;
+
+    message.textContent =
+        "The file download has been requested.";
+
+
+    const link =
+        document.createElement("a");
+
+    link.href =
+        "/api/download?file="
+        + encodeURIComponent(fileName);
+
+    link.download =
+        fileName.split("/").pop();
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+
+
+    status.textContent =
+        "Download requested";
+}
+
+</script>
+
+</body>
+</html>

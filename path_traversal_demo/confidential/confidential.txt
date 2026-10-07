@@ -1,0 +1,7 @@
+CONFIDENTIAL FILE
+
+ISEC3004 Path Traversal Demonstration
+
+This file is outside the intended documents directory.
+It represents sensitive information that should not be accessible
+through the document viewer.

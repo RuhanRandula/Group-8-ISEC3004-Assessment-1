@@ -1,0 +1,6 @@
+ISEC3004 - Lecture 7
+
+Path Traversal and File Path Security
+
+This is a normal learning resource stored inside the intended
+course resources directory.

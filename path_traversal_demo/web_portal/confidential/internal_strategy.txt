@@ -1,8 +1,0 @@
-CONFIDENTIAL - INTERNAL STRATEGY
-
-Classification: Highly Restricted
-Department: Executive Planning
-
-This document contains simulated internal strategy information for the Path Traversal security demonstration.
-
-No real organisational information is contained in this file.
