@@ -19,6 +19,9 @@ public class StudentPortalServer {
     private static final File DOCUMENTS_DIR =
             new File(DEMO_ROOT, "documents");
 
+    private static final File DOWNLOADS_DIR =
+            new File(DEMO_ROOT, "downloads");
+
     private static final File CONFIDENTIAL_DIR =
             new File(DEMO_ROOT, "confidential");
 
@@ -159,7 +162,7 @@ public class StudentPortalServer {
          * remains inside the intended directory.
          */
         File requestedFile =
-                new File(DOCUMENTS_DIR, fileName);
+                new File(DOWNLOADS_DIR, fileName);
 
         if (!requestedFile.exists()
                 || !requestedFile.isFile()) {
