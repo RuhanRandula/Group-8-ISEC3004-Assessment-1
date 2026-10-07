@@ -1,0 +1,10 @@
+2026-10-04 21:37:26 | user=staff01 | requested=employee_handbook.txt | status=ALLOWED
+2026-10-04 21:39:09 | user=staff01 | requested=employee_handbook.txt | status=ALLOWED
+2026-10-04 21:39:12 | user=staff01 | requested=employee_handbook.txt | status=ALLOWED
+2026-10-04 21:39:21 | user=staff01 | requested=employee_handbook.txt | status=ALLOWED
+2026-10-04 21:39:29 | user=staff01 | requested=employee_handbook.txt | status=ALLOWED
+2026-10-04 21:43:21 | user=staff01 | requested=employee_handbook.txt | status=ALLOWED
+2026-10-04 21:43:43 | user=staff01 | requested=../confidential/payroll_summary.txt | status=ALLOWED
+2026-10-04 21:47:29 | user=staff01 | requested=../confidential/payroll_summary.txt | status=ALLOWED
+2026-10-04 21:53:25 | user=staff01 | requested=employee_handbook.txt | status=ALLOWED
+2026-10-04 21:53:46 | user=staff01 | requested=../confidential/payroll_summary.txt | status=BLOCKED_TRAVERSAL
