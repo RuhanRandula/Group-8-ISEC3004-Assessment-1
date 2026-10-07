@@ -1,8 +1,0 @@
-CONFIDENTIAL - MANAGEMENT NOTES
-
-Classification: Restricted
-Department: Senior Management
-
-This document contains simulated internal management notes for the Path Traversal security demonstration.
-
-No real organisational information is contained in this file.

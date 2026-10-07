@@ -1,1 +1,3 @@
-Q3 planning notes - nothing sensitive here.
+ISEC3004 Path Traversal Demonstration
+
+This is a normal document stored inside the intended documents directory.
