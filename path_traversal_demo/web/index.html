@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCSEP | ISEC3004 Student Portal</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="login-page">
+
+    <main class="login-wrapper">
+
+        <section class="login-brand">
+            <img
+                src="assets/curtin-colombo-logo.png.png"
+                alt="Curtin University Colombo"
+                class="curtin-logo"
+            >
+
+            <p class="portal-label">
+                STUDENT SECURITY PORTAL
+            </p>
+
+            <h1>
+                Cyber Crime and Security Enhanced Programming
+            </h1>
+
+            <p class="module-code">
+                ISEC3004
+            </p>
+        </section>
+
+        <section class="login-card">
+
+            <p class="card-label">STUDENT LOGIN</p>
+
+            <h2>Welcome</h2>
+
+            <p class="login-description">
+                Sign in to access the CCSEP student portal.
+            </p>
+
+            <form id="loginForm">
+
+                <div class="form-group">
+                    <label for="studentId">Student ID</label>
+
+                    <input
+                        type="text"
+                        id="studentId"
+                        name="studentId"
+                        placeholder="Enter your student ID"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="login-button">
+                    Sign In
+                </button>
+
+            </form>
+
+            <p class="demo-message">
+                Student-built educational application for ISEC3004.
+            </p>
+
+        </section>
+
+    </main>
+
+    <footer class="login-footer">
+        <p>
+            This is an educational security demonstration and
+            is not an official university service.
+        </p>
+    </footer>
+
+    <script src="js/app.js"></script>
+
+</body>
+</html>

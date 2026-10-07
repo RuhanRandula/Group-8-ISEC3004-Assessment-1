@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CCSEP | Learning Resources</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="portal-header">
+
+    <div class="portal-header-content">
+
+        <div class="portal-brand">
+
+            <img src="assets/curtin-colombo-logo.png.png"
+                 alt="Curtin University Colombo">
+
+            <div>
+                <strong>Student Portal</strong>
+                <span>Cyber Crime and Security Enhanced Programming</span>
+            </div>
+
+        </div>
+
+        <div class="portal-user">
+
+            <span>ISEC3004</span>
+
+            <button onclick="window.location.href='dashboard.html'">
+                Dashboard
+            </button>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<main class="portal-page">
+
+    <div class="page-heading">
+
+        <p class="section-label">COURSE MATERIALS</p>
+
+        <h1>Learning Resources</h1>
+
+        <p>
+            Access lecture notes and learning materials for ISEC3004.
+        </p>
+
+    </div>
+
+
+    <section class="resource-layout">
+
+        <div class="resource-list">
+
+            <div class="resource-card">
+
+                <div>
+                    <p class="document-type">
+                        LECTURE MATERIAL
+                    </p>
+
+                    <h2>Lecture 7 — Path Traversal</h2>
+
+                    <p>
+                        Course material covering file path handling
+                        and path traversal vulnerabilities.
+                    </p>
+                </div>
+
+                <button
+                    class="view-button"
+                    onclick="viewResource('lecture7.txt')">
+                    View Resource
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <aside class="file-request-panel">
+
+            <p class="section-label">
+                RESOURCE ACCESS
+            </p>
+
+            <h2>Open a resource</h2>
+
+            <p>
+                Enter the filename of a course resource.
+            </p>
+
+            <label for="resourceName">
+                Resource filename
+            </label>
+
+            <input
+                type="text"
+                id="resourceName"
+                placeholder="lecture7.txt">
+
+            <button
+                class="request-button"
+                onclick="requestResource()">
+                Open Resource
+            </button>
+
+        </aside>
+
+    </section>
+
+
+    <section class="document-result">
+
+        <div class="result-header">
+
+            <div>
+
+                <p class="section-label">
+                    RESOURCE CONTENT
+                </p>
+
+                <h2>Resource Viewer</h2>
+
+            </div>
+
+            <span id="resourceStatus">
+                No resource requested
+            </span>
+
+        </div>
+
+        <pre id="resourceContent">Select a resource to view its contents.</pre>
+
+    </section>
+
+</main>
+
+
+<footer class="portal-footer">
+
+    <p>
+        ISEC3004 Cyber Crime and Security Enhanced Programming
+    </p>
+
+    <p>
+        Educational security demonstration
+    </p>
+
+</footer>
+
+
+<script>
+
+function viewResource(fileName) {
+
+    document.getElementById("resourceName").value =
+        fileName;
+
+    requestResource();
+}
+
+
+function requestResource() {
+
+    const fileName =
+        document.getElementById("resourceName").value.trim();
+
+    const content =
+        document.getElementById("resourceContent");
+
+    const status =
+        document.getElementById("resourceStatus");
+
+
+    if (fileName === "") {
+
+        content.textContent =
+            "Please enter a resource filename.";
+
+        status.textContent =
+            "No resource requested";
+
+        return;
+    }
+
+
+    status.textContent =
+        "Requesting: " + fileName;
+
+
+    fetch(
+        "/api/resource?file="
+        + encodeURIComponent(fileName)
+    )
+
+    .then(response => {
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Resource could not be opened."
+            );
+        }
+
+        return response.text();
+    })
+
+    .then(data => {
+
+        content.textContent = data;
+
+        status.textContent =
+            "Resource loaded successfully";
+
+    })
+
+    .catch(error => {
+
+        content.textContent =
+            error.message;
+
+        status.textContent =
+            "Request failed";
+    });
+}
+
+</script>
+
+</body>
+</html>

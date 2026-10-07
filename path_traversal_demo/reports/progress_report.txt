@@ -1,0 +1,10 @@
+ISEC3004 ACADEMIC REPORT
+
+Student Academic Progress Report
+
+Module: Cyber Crime and Security Enhanced Programming
+Module Code: ISEC3004
+Semester: 2, 2026
+
+This is a normal academic report stored inside
+the intended reports directory.
