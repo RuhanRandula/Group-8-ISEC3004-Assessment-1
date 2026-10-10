@@ -8,6 +8,7 @@ import java.net.InetSocketAddress;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class StudentPortalServer {
 
@@ -65,17 +66,24 @@ public class StudentPortalServer {
         System.out.println("Server running at:");
         System.out.println("http://localhost:" + PORT);
         System.out.println();
-        System.out.println("Path Traversal demonstration server");
+        System.out.println("Path Traversal mitigation server");
         System.out.println("Press Ctrl+C to stop.");
         System.out.println("==========================================");
 
         server.start();
     }
 
+    /*
+     * Serves the website files.
+     *
+     * The requested path is resolved canonically and checked to ensure
+     * that it remains inside the web directory.
+     */
     private static void serveWebsite(HttpExchange exchange)
             throws IOException {
 
-        String requestPath = exchange.getRequestURI().getPath();
+        String requestPath =
+                exchange.getRequestURI().getPath();
 
         if (requestPath.equals("/")) {
             requestPath = "/index.html";
@@ -84,9 +92,10 @@ public class StudentPortalServer {
         File webRoot = new File(DEMO_ROOT, "web");
 
         File requestedFile =
-                new File(webRoot, requestPath.substring(1));
+                resolveSafeFile(webRoot, requestPath.substring(1));
 
-        if (!requestedFile.exists()
+        if (requestedFile == null
+                || !requestedFile.exists()
                 || !requestedFile.isFile()) {
 
             sendResponse(
@@ -98,11 +107,11 @@ public class StudentPortalServer {
             return;
         }
 
-        String contentType = getContentType(requestedFile);
+        String contentType =
+                getContentType(requestedFile);
 
-        byte[] content = Files.readAllBytes(
-                requestedFile.toPath()
-        );
+        byte[] content =
+                Files.readAllBytes(requestedFile.toPath());
 
         exchange.getResponseHeaders().set(
                 "Content-Type",
@@ -121,6 +130,9 @@ public class StudentPortalServer {
         }
     }
 
+    /*
+     * View a document safely.
+     */
     private static void viewDocument(
             HttpExchange exchange)
             throws IOException {
@@ -133,17 +145,25 @@ public class StudentPortalServer {
                         + fileName
         );
 
-        /*
-         * Vulnerable code:
-         * The user-controlled filename is added directly
-         * to the documents directory.
-         */
         File requestedFile =
-                new File(DOCUMENTS_DIR, fileName);
+                resolveSafeFile(DOCUMENTS_DIR, fileName);
+
+        if (requestedFile == null) {
+            sendResponse(
+                    exchange,
+                    403,
+                    "Access denied."
+            );
+
+            return;
+        }
 
         readAndDisplayFile(exchange, requestedFile);
     }
 
+    /*
+     * Download a file safely.
+     */
     private static void downloadFile(
             HttpExchange exchange)
             throws IOException {
@@ -156,13 +176,18 @@ public class StudentPortalServer {
                         + fileName
         );
 
-        /*
-         * Vulnerable code:
-         * No validation checks whether the final path
-         * remains inside the intended directory.
-         */
         File requestedFile =
-                new File(DOWNLOADS_DIR, fileName);
+                resolveSafeFile(DOWNLOADS_DIR, fileName);
+
+        if (requestedFile == null) {
+            sendResponse(
+                    exchange,
+                    403,
+                    "Access denied."
+            );
+
+            return;
+        }
 
         if (!requestedFile.exists()
                 || !requestedFile.isFile()) {
@@ -203,6 +228,9 @@ public class StudentPortalServer {
         }
     }
 
+    /*
+     * View a resource safely.
+     */
     private static void viewResource(
             HttpExchange exchange)
             throws IOException {
@@ -218,15 +246,25 @@ public class StudentPortalServer {
         File resourceDirectory =
                 new File(DEMO_ROOT, "resources");
 
-        /*
-         * Vulnerable resource loader.
-         */
         File requestedFile =
-                new File(resourceDirectory, fileName);
+                resolveSafeFile(resourceDirectory, fileName);
+
+        if (requestedFile == null) {
+            sendResponse(
+                    exchange,
+                    403,
+                    "Access denied."
+            );
+
+            return;
+        }
 
         readAndDisplayFile(exchange, requestedFile);
     }
 
+    /*
+     * View a report safely.
+     */
     private static void viewReport(
             HttpExchange exchange)
             throws IOException {
@@ -242,15 +280,25 @@ public class StudentPortalServer {
         File reportDirectory =
                 new File(DEMO_ROOT, "reports");
 
-        /*
-         * Vulnerable report viewer.
-         */
         File requestedFile =
-                new File(reportDirectory, fileName);
+                resolveSafeFile(reportDirectory, fileName);
+
+        if (requestedFile == null) {
+            sendResponse(
+                    exchange,
+                    403,
+                    "Access denied."
+            );
+
+            return;
+        }
 
         readAndDisplayFile(exchange, requestedFile);
     }
 
+    /*
+     * View an attachment safely.
+     */
     private static void viewAttachment(
             HttpExchange exchange)
             throws IOException {
@@ -266,15 +314,74 @@ public class StudentPortalServer {
         File attachmentDirectory =
                 new File(DEMO_ROOT, "attachments");
 
-        /*
-         * Vulnerable attachment viewer.
-         */
         File requestedFile =
-                new File(attachmentDirectory, fileName);
+                resolveSafeFile(
+                        attachmentDirectory,
+                        fileName
+                );
+
+        if (requestedFile == null) {
+            sendResponse(
+                    exchange,
+                    403,
+                    "Access denied."
+            );
+
+            return;
+        }
 
         readAndDisplayFile(exchange, requestedFile);
     }
 
+    /*
+     * Securely resolve a user-controlled filename.
+     *
+     * The canonical path of the requested file must remain inside
+     * the canonical path of the intended base directory.
+     */
+    private static File resolveSafeFile(
+            File baseDirectory,
+            String userPath)
+            throws IOException {
+
+        if (userPath == null || userPath.isEmpty()) {
+            return null;
+        }
+
+        File canonicalBase =
+                baseDirectory.getCanonicalFile();
+
+        File requestedFile =
+                new File(canonicalBase, userPath);
+
+        File canonicalRequested =
+                requestedFile.getCanonicalFile();
+
+        Path basePath =
+                canonicalBase.toPath().normalize();
+
+        Path requestedPath =
+                canonicalRequested.toPath().normalize();
+
+        /*
+         * The requested file must remain inside the
+         * intended directory.
+         */
+        if (!requestedPath.startsWith(basePath)) {
+            System.out.println(
+                    "[SECURITY] Blocked path traversal attempt: "
+                            + userPath
+            );
+
+            return null;
+        }
+
+        return canonicalRequested;
+    }
+
+    /*
+     * Read and display a file.
+     */
     private static void readAndDisplayFile(
             HttpExchange exchange,
             File requestedFile)
@@ -304,6 +411,9 @@ public class StudentPortalServer {
         );
     }
 
+    /*
+     * Get a query-string parameter.
+     */
     private static String getParameter(
             HttpExchange exchange,
             String name) {
@@ -334,6 +444,9 @@ public class StudentPortalServer {
         return "";
     }
 
+    /*
+     * Send a text response.
+     */
     private static void sendResponse(
             HttpExchange exchange,
             int status,
@@ -341,7 +454,9 @@ public class StudentPortalServer {
             throws IOException {
 
         byte[] content =
-                message.getBytes(StandardCharsets.UTF_8);
+                message.getBytes(
+                        StandardCharsets.UTF_8
+                );
 
         exchange.getResponseHeaders().set(
                 "Content-Type",
@@ -360,6 +475,9 @@ public class StudentPortalServer {
         }
     }
 
+    /*
+     * Determine the content type of a file.
+     */
     private static String getContentType(
             File file) {
 
