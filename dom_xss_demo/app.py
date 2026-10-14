@@ -6,7 +6,7 @@ from flask import Flask, render_template, make_response, redirect, url_for
 
 app = Flask(__name__)
 
-# Set to True for the fixed version.
+# True enables the CSP layer (the sink fix is in board.js).
 TOGGLE_MITIGATION = True
 
 
